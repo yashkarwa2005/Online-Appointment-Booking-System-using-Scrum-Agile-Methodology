@@ -255,6 +255,7 @@ class AppointmentService:
 
             return {
                 "id": appt_id,
+                "appointment_id": appt_id,
                 "user_id": user_id,
                 "professional_id": professional_id,
                 "doctor_name": doc_row["doctor_name"] if doc_row else "Doctor",

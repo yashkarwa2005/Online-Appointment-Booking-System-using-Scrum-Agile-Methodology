@@ -267,8 +267,12 @@ class MediFlowRequestHandler(BaseHTTPRequestHandler):
                 appt = svc.book_appointment(int(user_id), int(prof_id), int(slot_id), notes=notes)
                 u = svc.get_user_by_id(int(user_id))
                 user_name = u["full_name"] if u else f"User #{user_id}"
+                appt_id = appt.get("appointment_id") or appt.get("id", "N/A")
+                doc_name = appt.get("doctor_name", "Doctor")
+                appt_date = appt.get("appointment_date", "")
+                appt_time = appt.get("appointment_time", "")
                 log_audit("APPOINTMENT_BOOKED", int(user_id), user_name,
-                          f"Booked appointment #{appt['appointment_id']} with {appt['doctor_name']} on {appt['appointment_date']} at {appt['appointment_time']}.")
+                          f"Booked appointment #{appt_id} with {doc_name} on {appt_date} at {appt_time}.")
                 self.send_json(appt, status_code=201)
             except Exception as e:
                 self.send_error_json(str(e), status_code=400)

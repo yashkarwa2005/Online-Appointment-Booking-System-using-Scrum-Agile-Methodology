@@ -1201,7 +1201,15 @@
           await loadAdminStats();
           openReceiptModal(result);
         } else {
-          alert("Booking failed: " + (result.error || "Slot may already be booked."));
+          if (result.error && result.error.toLowerCase().includes("already booked")) {
+            closeBookingModal();
+            if (selectedDoctor && selectedDate) {
+              await fetchSlotsForDoctorDate(selectedDoctor.id, selectedDate);
+            }
+            alert("Notice: This time slot was already reserved. Please select another open slot from the list.");
+          } else {
+            alert("Booking failed: " + (result.error || "Please try again."));
+          }
         }
       } catch (e) {
         alert("Network error: " + e.message);
