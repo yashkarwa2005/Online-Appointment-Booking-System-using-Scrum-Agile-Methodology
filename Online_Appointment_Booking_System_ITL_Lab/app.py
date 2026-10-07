@@ -113,6 +113,11 @@ class MediFlowRequestHandler(BaseHTTPRequestHandler):
         path = parsed.path
         query = urllib.parse.parse_qs(parsed.query)
 
+        if path == "/favicon.ico":
+            self.send_response(204)
+            self.end_headers()
+            return
+
         # 1. Frontend Homepage
         if path == "/" or path == "/index.html":
             template_path = os.path.join(BASE_DIR, "templates", "index.html")
