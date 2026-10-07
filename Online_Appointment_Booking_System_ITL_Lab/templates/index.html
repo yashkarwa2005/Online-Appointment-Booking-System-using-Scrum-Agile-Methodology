@@ -1,0 +1,1478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MediFlow · Online Appointment Booking System (Scrum Agile PBL / ITL Lab)</title>
+  <style>
+    :root {
+      --bg-primary: #0a0f1d;
+      --bg-secondary: #111827;
+      --bg-card: #1e293b;
+      --bg-card-hover: #283548;
+      --border-color: #334155;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent: #0284c7;
+      --accent-hover: #0369a1;
+      --accent-glow: rgba(2, 132, 199, 0.25);
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --purple: #8b5cf6;
+      --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --radius: 12px;
+      --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      font-family: var(--font-family);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* Top Navigation Bar */
+    header {
+      background: rgba(17, 24, 39, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-color);
+      padding: 14px 28px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .brand-icon {
+      width: 42px;
+      height: 42px;
+      background: linear-gradient(135deg, #0284c7, #38bdf8);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      box-shadow: 0 4px 14px var(--accent-glow);
+    }
+    .brand-text h1 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+    .brand-text p {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    .badge-pbl {
+      background: rgba(139, 92, 246, 0.2);
+      color: #c084fc;
+      border: 1px solid rgba(139, 92, 246, 0.4);
+      font-size: 0.7rem;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-weight: 600;
+      margin-left: 6px;
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .user-pill {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      padding: 6px 14px;
+      border-radius: 30px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+    }
+    .user-pill select {
+      background: transparent;
+      color: var(--text-main);
+      border: none;
+      outline: none;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .user-pill select option {
+      background: var(--bg-secondary);
+      color: var(--text-main);
+    }
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      color: var(--success);
+      font-weight: 600;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      padding: 5px 10px;
+      border-radius: 20px;
+    }
+    .dot {
+      width: 8px;
+      height: 8px;
+      background: var(--success);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+      70% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+
+    /* Tab Navigation */
+    .nav-tabs {
+      display: flex;
+      gap: 6px;
+      padding: 12px 28px;
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-color);
+      overflow-x: auto;
+    }
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+    .tab-btn:hover {
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.05);
+    }
+    .tab-btn.active {
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 4px 12px var(--accent-glow);
+    }
+    .tab-badge {
+      background: rgba(255, 255, 255, 0.2);
+      font-size: 0.7rem;
+      padding: 2px 6px;
+      border-radius: 12px;
+    }
+
+    /* Main Container */
+    main {
+      flex: 1;
+      padding: 28px;
+      max-width: 1400px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* Section Headers */
+    .section-header {
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .section-header h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+    .section-header p {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-top: 4px;
+    }
+
+    /* Filters & Buttons */
+    .filter-bar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 22px;
+    }
+    .chip {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .chip:hover {
+      border-color: var(--accent);
+      color: var(--text-main);
+    }
+    .chip.active {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    /* Doctor Cards Grid */
+    .doctor-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 22px;
+    }
+    .doctor-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+    }
+    .doctor-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--accent);
+      box-shadow: var(--shadow);
+    }
+    .doc-header {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+    }
+    .doc-avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #38bdf8, #0284c7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+    .doc-info h3 { font-size: 1.1rem; font-weight: 700; }
+    .doc-dept {
+      color: #38bdf8;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 2px;
+    }
+    .doc-specialty {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    .doc-bio {
+      font-size: 0.85rem;
+      color: #cbd5e1;
+      line-height: 1.45;
+      background: rgba(15, 23, 42, 0.6);
+      padding: 10px 14px;
+      border-radius: 8px;
+    }
+    .doc-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding-top: 12px;
+    }
+    .fee-badge {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #34d399;
+    }
+    .btn {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.88rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+    .btn:hover { background: var(--accent-hover); transform: translateY(-1px); }
+    .btn-secondary { background: #334155; color: #fff; }
+    .btn-secondary:hover { background: #475569; }
+    .btn-danger { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); }
+    .btn-danger:hover { background: #ef4444; color: #fff; }
+    .btn-success { background: var(--success); }
+    .btn-success:hover { background: #059669; }
+
+    /* Slot Selection Drawer/Section */
+    .slot-picker {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-top: 24px;
+      display: none;
+    }
+    .slot-picker.active { display: block; animation: fadeIn 0.3s ease; }
+    .date-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .slot-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+    .slot-chip {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      padding: 12px 10px;
+      border-radius: 8px;
+      text-align: center;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.88rem;
+      transition: all 0.2s;
+    }
+    .slot-chip:hover {
+      border-color: var(--accent);
+      background: var(--bg-card-hover);
+    }
+    .slot-chip.selected {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+      box-shadow: 0 4px 12px var(--accent-glow);
+    }
+
+    /* Appointments Table / Cards */
+    .appt-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0 10px;
+    }
+    .appt-table th {
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 12px 16px;
+      text-align: left;
+    }
+    .appt-row {
+      background: var(--bg-card);
+      transition: background 0.2s;
+    }
+    .appt-row:hover { background: var(--bg-card-hover); }
+    .appt-row td {
+      padding: 16px;
+      font-size: 0.9rem;
+      border-top: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
+    }
+    .appt-row td:first-child {
+      border-left: 1px solid var(--border-color);
+      border-top-left-radius: 8px;
+      border-bottom-left-radius: 8px;
+    }
+    .appt-row td:last-child {
+      border-right: 1px solid var(--border-color);
+      border-top-right-radius: 8px;
+      border-bottom-right-radius: 8px;
+    }
+    .status-pill {
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 20px;
+      display: inline-block;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+    .status-confirmed { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
+    .status-cancelled { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); }
+    .status-completed { background: rgba(2, 132, 199, 0.2); color: #38bdf8; border: 1px solid rgba(2, 132, 199, 0.4); }
+
+    /* Admin KPI Cards */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 18px;
+      margin-bottom: 28px;
+    }
+    .kpi-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .kpi-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+    }
+    .kpi-num {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+    .kpi-label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 2px;
+    }
+
+    /* Kanban Board */
+    .kanban-board {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 16px;
+      overflow-x: auto;
+      padding-bottom: 20px;
+      min-width: 1050px;
+    }
+    .kanban-col {
+      background: rgba(17, 24, 39, 0.7);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .kanban-col-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 700;
+      font-size: 0.85rem;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--border-color);
+    }
+    .col-count {
+      background: var(--bg-card);
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+    }
+    .story-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      font-size: 0.85rem;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      transition: transform 0.15s, border-color 0.15s;
+    }
+    .story-card:hover {
+      transform: translateY(-2px);
+      border-color: #38bdf8;
+    }
+    .story-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .story-code {
+      font-weight: 800;
+      color: #38bdf8;
+      font-size: 0.75rem;
+    }
+    .priority-badge {
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 12px;
+    }
+    .priority-high { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); }
+    .priority-medium { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
+    .priority-low { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
+    .story-title { font-weight: 600; line-height: 1.35; }
+    .story-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      padding-top: 8px;
+    }
+    .story-controls {
+      display: flex;
+      gap: 4px;
+    }
+    .btn-step {
+      background: #334155;
+      color: #fff;
+      border: none;
+      padding: 3px 7px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      cursor: pointer;
+    }
+    .btn-step:hover { background: var(--accent); }
+
+    /* Modals */
+    .modal-backdrop {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(6px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+    .modal-backdrop.active { display: flex; animation: fadeIn 0.2s ease; }
+    .modal {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      max-width: 540px;
+      width: 100%;
+      padding: 28px;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .modal-header h3 { font-size: 1.25rem; font-weight: 700; }
+    .modal-close {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1.4rem;
+      cursor: pointer;
+    }
+
+    /* Printable Slip / Receipt */
+    .receipt-box {
+      background: #ffffff;
+      color: #0f172a;
+      border-radius: 8px;
+      padding: 24px;
+      font-family: 'Courier New', Courier, monospace;
+      border: 2px dashed #94a3b8;
+    }
+    .receipt-box h4 {
+      text-align: center;
+      font-size: 1.2rem;
+      font-weight: 900;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .receipt-sub {
+      text-align: center;
+      font-size: 0.8rem;
+      color: #475569;
+      margin-bottom: 16px;
+      border-bottom: 1px dashed #cbd5e1;
+      padding-bottom: 8px;
+    }
+    .receipt-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      margin-bottom: 8px;
+    }
+    .receipt-footer {
+      text-align: center;
+      border-top: 1px dashed #cbd5e1;
+      margin-top: 14px;
+      padding-top: 10px;
+      font-size: 0.75rem;
+      color: #475569;
+    }
+
+    /* Responsive */
+    @media (max-width: 850px) {
+      header { padding: 12px 16px; }
+      main { padding: 16px; }
+      .kanban-board { min-width: 900px; }
+    }
+
+    /* Print Styles */
+    @media print {
+      body * { visibility: hidden; }
+      #printableReceipt, #printableReceipt * { visibility: visible; }
+      #printableReceipt {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        margin: 0;
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <header>
+    <div class="brand">
+      <div class="brand-icon">🏥</div>
+      <div class="brand-text">
+        <h1>MediFlow <span class="badge-pbl">Scrum Agile PBL</span></h1>
+        <p>Online Appointment Booking System · B.Tech 3rd Year ITL Lab</p>
+      </div>
+    </div>
+
+    <div class="header-controls">
+      <div class="status-indicator">
+        <span class="dot"></span>
+        <span>SQLite Concurrency Lock · Active</span>
+      </div>
+
+      <div class="user-pill">
+        <span>👤 Active User:</span>
+        <select id="activeUserSelect" onchange="handleUserChange()">
+          <!-- Populated dynamically -->
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <!-- Navigation Tabs -->
+  <nav class="nav-tabs">
+    <button class="tab-btn active" onclick="switchTab('bookTab', this)">
+      🩺 Book Appointment
+    </button>
+    <button class="tab-btn" onclick="switchTab('myAppointmentsTab', this)">
+      📋 My Appointments <span class="tab-badge" id="myApptCount">0</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('doctorPortalTab', this)">
+      👨‍⚕️ Doctor & Clinic Portal
+    </button>
+    <button class="tab-btn" onclick="switchTab('adminTab', this)">
+      🏛️ Hospital Administration & Audit
+    </button>
+    <button class="tab-btn" onclick="switchTab('kanbanTab', this)">
+      ⚡ Agile Scrum Kanban Board <span class="tab-badge" id="kanbanTotalBadge">15 Stories</span>
+    </button>
+  </nav>
+
+  <!-- Main Container -->
+  <main>
+
+    <!-- TAB 1: BOOK APPOINTMENT -->
+    <section id="bookTab" class="tab-content active">
+      <div class="section-header">
+        <div>
+          <h2>Search & Book Healthcare Specialists</h2>
+          <p>Real-time slot querying with atomic double-booking prevention</p>
+        </div>
+      </div>
+
+      <div class="filter-bar">
+        <button class="chip active" onclick="filterDoctors('all', this)">All Specialists</button>
+        <button class="chip" onclick="filterDoctors('Cardiology', this)">❤️ Cardiology</button>
+        <button class="chip" onclick="filterDoctors('Neurology', this)">🧠 Neurology</button>
+        <button class="chip" onclick="filterDoctors('Dermatology', this)">✨ Dermatology</button>
+      </div>
+
+      <div class="doctor-grid" id="doctorCardsContainer">
+        <!-- Rendered via JS -->
+      </div>
+
+      <!-- Live Slot Selection Drawer -->
+      <div class="slot-picker" id="slotPickerSection">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+          <div>
+            <h3 id="selectedDocName" style="font-size:1.2rem; font-weight:700;">Select Consultation Slot</h3>
+            <p id="selectedDocDept" style="color:var(--text-muted); font-size:0.85rem;"></p>
+          </div>
+          <button class="btn btn-secondary" onclick="closeSlotPicker()">✕ Close Picker</button>
+        </div>
+
+        <div style="margin-bottom:12px; font-weight:600; font-size:0.85rem; color:var(--text-muted);">
+          1. CHOOSE CONSULTATION DATE:
+        </div>
+        <div class="date-row" id="dateButtonsContainer">
+          <!-- Populated dynamically -->
+        </div>
+
+        <div style="margin-bottom:12px; font-weight:600; font-size:0.85rem; color:var(--text-muted);">
+          2. SELECT OPEN TIME SLOT:
+        </div>
+        <div class="slot-grid" id="slotsContainer">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: MY APPOINTMENTS -->
+    <section id="myAppointmentsTab" class="tab-content">
+      <div class="section-header">
+        <div>
+          <h2>Patient Appointment History & Status</h2>
+          <p>View upcoming bookings, cancel to release slots, reschedule, or reprint confirmation slips</p>
+        </div>
+        <button class="btn" onclick="loadMyAppointments()">🔄 Refresh List</button>
+      </div>
+
+      <div style="overflow-x:auto;">
+        <table class="appt-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Doctor & Department</th>
+              <th>Date & Time</th>
+              <th>Fee</th>
+              <th>Status</th>
+              <th>Notes</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="myAppointmentsTableBody">
+            <!-- Populated dynamically -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- TAB 3: DOCTOR & CLINIC PORTAL -->
+    <section id="doctorPortalTab" class="tab-content">
+      <div class="section-header">
+        <div>
+          <h2>Doctor Consultation & Schedule Manager</h2>
+          <p>Review daily patient roster, mark appointments completed, and publish new availability slots</p>
+        </div>
+      </div>
+
+      <div style="display:grid; grid-template-columns: 1fr 340px; gap:24px; flex-wrap:wrap;">
+        <div>
+          <h3 style="font-size:1.1rem; margin-bottom:14px;">📅 Patient Consultation Queue</h3>
+          <div style="overflow-x:auto;">
+            <table class="appt-table">
+              <thead>
+                <tr>
+                  <th>Appt #</th>
+                  <th>Patient Name</th>
+                  <th>Date & Time</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="doctorQueueTableBody">
+                <!-- Rendered dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Add New Slot Form -->
+        <div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius); padding:20px;">
+          <h3 style="font-size:1.1rem; margin-bottom:12px;">➕ Add Consultation Slot</h3>
+          <form id="addSlotForm" onsubmit="handleAddSlot(event)" style="display:flex; flex-direction:column; gap:12px;">
+            <div>
+              <label style="font-size:0.8rem; color:var(--text-muted); display:block; margin-bottom:4px;">Date</label>
+              <input type="date" id="newSlotDate" required style="width:100%; padding:8px 12px; background:var(--bg-secondary); border:1px solid var(--border-color); color:#fff; border-radius:6px;">
+            </div>
+            <div>
+              <label style="font-size:0.8rem; color:var(--text-muted); display:block; margin-bottom:4px;">Start Time (HH:MM)</label>
+              <input type="time" id="newSlotStartTime" required style="width:100%; padding:8px 12px; background:var(--bg-secondary); border:1px solid var(--border-color); color:#fff; border-radius:6px;">
+            </div>
+            <div>
+              <label style="font-size:0.8rem; color:var(--text-muted); display:block; margin-bottom:4px;">End Time (HH:MM)</label>
+              <input type="time" id="newSlotEndTime" required style="width:100%; padding:8px 12px; background:var(--bg-secondary); border:1px solid var(--border-color); color:#fff; border-radius:6px;">
+            </div>
+            <button type="submit" class="btn btn-success" style="margin-top:8px;">Publish Slot</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 4: HOSPITAL ADMIN & AUDIT -->
+    <section id="adminTab" class="tab-content">
+      <div class="section-header">
+        <div>
+          <h2>Hospital Administrative Oversight & System Analytics</h2>
+          <p>Real-time database metrics and immutable audit ledger</p>
+        </div>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-icon" style="background:rgba(2, 132, 199, 0.2); color:#38bdf8;">👥</div>
+          <div>
+            <div class="kpi-num" id="kpiPatients">--</div>
+            <div class="kpi-label">Registered Patients</div>
+          </div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-icon" style="background:rgba(16, 185, 129, 0.2); color:#34d399;">🩺</div>
+          <div>
+            <div class="kpi-num" id="kpiDoctors">--</div>
+            <div class="kpi-label">Active Specialists</div>
+          </div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-icon" style="background:rgba(139, 92, 246, 0.2); color:#c084fc;">📅</div>
+          <div>
+            <div class="kpi-num" id="kpiConfirmedAppts">--</div>
+            <div class="kpi-label">Confirmed Bookings</div>
+          </div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-icon" style="background:rgba(245, 158, 11, 0.2); color:#fbbf24;">💰</div>
+          <div>
+            <div class="kpi-num" id="kpiRevenue">₹0</div>
+            <div class="kpi-label">Total Revenue</div>
+          </div>
+        </div>
+      </div>
+
+      <h3 style="font-size:1.15rem; margin-bottom:12px;">🛡️ System Audit Trail Log</h3>
+      <div style="overflow-x:auto;">
+        <table class="appt-table">
+          <thead>
+            <tr>
+              <th>Timestamp</th>
+              <th>Action Type</th>
+              <th>Triggered By</th>
+              <th>Details</th>
+            </tr>
+          </thead>
+          <tbody id="auditLogTableBody">
+            <!-- Populated dynamically -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- TAB 5: AGILE SCRUM KANBAN BOARD -->
+    <section id="kanbanTab" class="tab-content">
+      <div class="section-header">
+        <div>
+          <h2>Agile Scrum PBL Interactive Kanban Board</h2>
+          <p>Live synchronized User Stories across 5 Scrum lifecycle stages · Click arrows to move cards</p>
+        </div>
+        <div style="display:flex; gap:10px; align-items:center;">
+          <span style="font-size:0.85rem; color:var(--text-muted);">Sprint Velocity: <strong style="color:#38bdf8;">54 Story Points</strong></span>
+          <button class="btn btn-secondary" onclick="loadKanbanBoard()">🔄 Refresh Board</button>
+        </div>
+      </div>
+
+      <div class="kanban-board" id="kanbanBoardContainer">
+        <!-- 5 Columns rendered dynamically via JS -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODAL: Booking Confirmation -->
+  <div class="modal-backdrop" id="bookingModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Confirm Appointment</h3>
+        <button class="modal-close" onclick="closeBookingModal()">✕</button>
+      </div>
+
+      <div id="bookingSummaryDetails" style="background:var(--bg-card); padding:16px; border-radius:8px; font-size:0.9rem; line-height:1.6;">
+        <!-- Populated via JS -->
+      </div>
+
+      <div>
+        <label style="display:block; font-size:0.85rem; color:var(--text-muted); margin-bottom:6px;">Patient Notes / Symptoms</label>
+        <textarea id="bookingNotes" rows="3" placeholder="e.g. Regular health checkup, mild chest pain, prescription refill..." style="width:100%; padding:10px; background:var(--bg-primary); border:1px solid var(--border-color); color:#fff; border-radius:6px; font-family:inherit; font-size:0.88rem;"></textarea>
+      </div>
+
+      <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:8px;">
+        <button class="btn btn-secondary" onclick="closeBookingModal()">Cancel</button>
+        <button class="btn btn-success" id="confirmBookingBtn" onclick="submitBooking()">🔒 Confirm & Lock Slot</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Printable Receipt Slip -->
+  <div class="modal-backdrop" id="receiptModal">
+    <div class="modal" style="max-width:480px;">
+      <div class="modal-header">
+        <h3>Official Appointment Slip</h3>
+        <button class="modal-close" onclick="closeReceiptModal()">✕</button>
+      </div>
+
+      <div class="receipt-box" id="printableReceipt">
+        <h4>MEDIFLOW CLINICAL CENTER</h4>
+        <div class="receipt-sub">B.Tech Agile Scrum · Online Appointment Slip</div>
+
+        <div class="receipt-row">
+          <span>RECEIPT / APPT ID:</span>
+          <strong id="rcptId">#APT-001</strong>
+        </div>
+        <div class="receipt-row">
+          <span>PATIENT NAME:</span>
+          <strong id="rcptPatient">Rohan Sharma</strong>
+        </div>
+        <div class="receipt-row">
+          <span>DOCTOR:</span>
+          <strong id="rcptDoctor">Dr. Priya Verma</strong>
+        </div>
+        <div class="receipt-row">
+          <span>SPECIALIZATION:</span>
+          <span id="rcptSpecialty">Cardiology</span>
+        </div>
+        <div class="receipt-row">
+          <span>DATE & TIME:</span>
+          <strong id="rcptDateTime">2026-10-15 @ 09:00 AM</strong>
+        </div>
+        <div class="receipt-row">
+          <span>CONSULTATION FEE:</span>
+          <strong id="rcptFee" style="color:#059669;">₹1,200.00 (PAID)</strong>
+        </div>
+        <div class="receipt-row">
+          <span>STATUS:</span>
+          <strong id="rcptStatus" style="color:#0284c7;">CONFIRMED</strong>
+        </div>
+
+        <div class="receipt-footer">
+          <p>Please arrive 10 minutes before consultation.</p>
+          <p style="margin-top:4px;">*** Thank you for choosing MediFlow ***</p>
+        </div>
+      </div>
+
+      <div style="display:flex; justify-content:space-between; gap:10px; margin-top:10px;">
+        <button class="btn btn-secondary" onclick="closeReceiptModal()">Close</button>
+        <button class="btn" onclick="window.print()">🖨️ Print / Download Slip</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript Application Logic -->
+  <script>
+    let currentUser = null;
+    let allUsers = [];
+    let doctorsList = [];
+    let selectedDoctor = null;
+    let selectedDate = null;
+    let selectedSlot = null;
+
+    // Initialize Application
+    document.addEventListener("DOMContentLoaded", async () => {
+      await loadUsers();
+      await loadDoctors();
+      await loadMyAppointments();
+      await loadAdminStats();
+      await loadKanbanBoard();
+    });
+
+    // Tab Switching
+    function switchTab(tabId, btnElem) {
+      document.querySelectorAll(".tab-content").forEach(el => el.classList.remove("active"));
+      document.querySelectorAll(".tab-btn").forEach(el => el.classList.remove("active"));
+      document.getElementById(tabId).classList.add("active");
+      btnElem.classList.add("active");
+
+      if (tabId === "myAppointmentsTab") loadMyAppointments();
+      if (tabId === "doctorPortalTab") loadDoctorQueue();
+      if (tabId === "adminTab") loadAdminStats();
+      if (tabId === "kanbanTab") loadKanbanBoard();
+    }
+
+    // Load Users for Switcher
+    async function loadUsers() {
+      try {
+        const res = await fetch("/api/users");
+        allUsers = await res.json();
+        const sel = document.getElementById("activeUserSelect");
+        sel.innerHTML = "";
+        allUsers.forEach(u => {
+          const opt = document.createElement("option");
+          opt.value = u.id;
+          opt.textContent = `${u.full_name} (${u.role.toUpperCase()})`;
+          sel.appendChild(opt);
+        });
+        currentUser = allUsers[0];
+      } catch (e) {
+        console.error("Failed to load users:", e);
+      }
+    }
+
+    function handleUserChange() {
+      const id = parseInt(document.getElementById("activeUserSelect").value);
+      currentUser = allUsers.find(u => u.id === id);
+      loadMyAppointments();
+      loadDoctorQueue();
+    }
+
+    // Load Doctors
+    async function loadDoctors() {
+      try {
+        const res = await fetch("/api/doctors");
+        doctorsList = await res.json();
+        renderDoctorCards(doctorsList);
+      } catch (e) {
+        console.error("Failed to load doctors:", e);
+      }
+    }
+
+    function filterDoctors(dept, chipElem) {
+      document.querySelectorAll(".filter-bar .chip").forEach(c => c.classList.remove("active"));
+      chipElem.classList.add("active");
+      if (dept === "all") {
+        renderDoctorCards(doctorsList);
+      } else {
+        const filtered = doctorsList.filter(d => d.specialization.toLowerCase().includes(dept.toLowerCase()) || d.department.toLowerCase().includes(dept.toLowerCase()));
+        renderDoctorCards(filtered);
+      }
+    }
+
+    function renderDoctorCards(docs) {
+      const container = document.getElementById("doctorCardsContainer");
+      container.innerHTML = "";
+      docs.forEach(d => {
+        const card = document.createElement("div");
+        card.className = "doctor-card";
+        card.innerHTML = `
+          <div class="doc-header">
+            <div class="doc-avatar">👨‍⚕️</div>
+            <div class="doc-info">
+              <h3>${d.doctor_name}</h3>
+              <div class="doc-dept">${d.department}</div>
+              <div class="doc-specialty">Specialist: ${d.specialization}</div>
+            </div>
+          </div>
+          <div class="doc-bio">${d.bio || "Experienced specialist providing comprehensive care."}</div>
+          <div class="doc-meta">
+            <div>
+              <span style="font-size:0.75rem; color:var(--text-muted); display:block;">CONSULTATION FEE</span>
+              <span class="fee-badge">₹${d.consultation_fee}</span>
+            </div>
+            <button class="btn" onclick="openSlotPicker(${d.id})">📅 Select Slot</button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // Slot Picker
+    async function openSlotPicker(doctorId) {
+      selectedDoctor = doctorsList.find(d => d.id === doctorId);
+      if (!selectedDoctor) return;
+
+      document.getElementById("selectedDocName").textContent = `Book with ${selectedDoctor.doctor_name}`;
+      document.getElementById("selectedDocDept").textContent = `${selectedDoctor.department} · Fee: ₹${selectedDoctor.consultation_fee}`;
+      document.getElementById("slotPickerSection").classList.add("active");
+
+      // Populate Dates
+      const dateContainer = document.getElementById("dateButtonsContainer");
+      dateContainer.innerHTML = "";
+      const dates = ["2026-10-15", "2026-10-16", "2026-10-17"];
+      dates.forEach((dt, idx) => {
+        const btn = document.createElement("button");
+        btn.className = `chip ${idx === 0 ? "active" : ""}`;
+        btn.textContent = dt;
+        btn.onclick = () => {
+          document.querySelectorAll("#dateButtonsContainer .chip").forEach(c => c.classList.remove("active"));
+          btn.classList.add("active");
+          selectedDate = dt;
+          fetchSlotsForDoctorDate(doctorId, dt);
+        };
+        dateContainer.appendChild(btn);
+      });
+
+      selectedDate = dates[0];
+      await fetchSlotsForDoctorDate(doctorId, selectedDate);
+      document.getElementById("slotPickerSection").scrollIntoView({ behavior: "smooth" });
+    }
+
+    function closeSlotPicker() {
+      document.getElementById("slotPickerSection").classList.remove("active");
+    }
+
+    async function fetchSlotsForDoctorDate(doctorId, date) {
+      const container = document.getElementById("slotsContainer");
+      container.innerHTML = "<div style='color:var(--text-muted);'>Loading available slots...</div>";
+      try {
+        const res = await fetch(`/api/slots?doctor_id=${doctorId}&date=${date}`);
+        const slots = await res.json();
+        container.innerHTML = "";
+        if (slots.length === 0) {
+          container.innerHTML = "<div style='color:#f87171; grid-column:1/-1;'>No available slots remaining for this date.</div>";
+          return;
+        }
+        slots.forEach(s => {
+          const chip = document.createElement("div");
+          chip.className = "slot-chip";
+          chip.textContent = `${s.start_time} - ${s.end_time}`;
+          chip.onclick = () => openBookingModal(s);
+          container.appendChild(chip);
+        });
+      } catch (e) {
+        container.innerHTML = "<div style='color:#f87171;'>Failed to load slots.</div>";
+      }
+    }
+
+    function openBookingModal(slot) {
+      selectedSlot = slot;
+      const details = document.getElementById("bookingSummaryDetails");
+      details.innerHTML = `
+        <div><strong>Patient:</strong> ${currentUser.full_name} (${currentUser.email})</div>
+        <div><strong>Doctor:</strong> ${selectedDoctor.doctor_name} (${selectedDoctor.department})</div>
+        <div><strong>Date & Time:</strong> ${selectedSlot.date} @ ${selectedSlot.start_time} - ${selectedSlot.end_time}</div>
+        <div><strong>Consultation Fee:</strong> ₹${selectedDoctor.consultation_fee}</div>
+      `;
+      document.getElementById("bookingModal").classList.add("active");
+    }
+
+    function closeBookingModal() {
+      document.getElementById("bookingModal").classList.remove("active");
+    }
+
+    async function submitBooking() {
+      const btn = document.getElementById("confirmBookingBtn");
+      btn.disabled = true;
+      btn.textContent = "Processing Lock...";
+      const notes = document.getElementById("bookingNotes").value;
+
+      try {
+        const res = await fetch("/api/appointments/book", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            user_id: currentUser.id,
+            professional_id: selectedDoctor.id,
+            slot_id: selectedSlot.id,
+            notes: notes
+          })
+        });
+        const result = await res.json();
+        if (res.ok) {
+          closeBookingModal();
+          closeSlotPicker();
+          await loadMyAppointments();
+          await loadAdminStats();
+          openReceiptModal(result);
+        } else {
+          alert("Booking failed: " + (result.error || "Slot may already be booked."));
+        }
+      } catch (e) {
+        alert("Network error: " + e.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "🔒 Confirm & Lock Slot";
+      }
+    }
+
+    // Printable Receipt
+    function openReceiptModal(data) {
+      document.getElementById("rcptId").textContent = `#APT-${data.appointment_id || data.id}`;
+      document.getElementById("rcptPatient").textContent = currentUser.full_name;
+      document.getElementById("rcptDoctor").textContent = data.doctor_name || selectedDoctor.doctor_name;
+      document.getElementById("rcptSpecialty").textContent = data.department || selectedDoctor.department;
+      document.getElementById("rcptDateTime").textContent = `${data.appointment_date} @ ${data.appointment_time}`;
+      document.getElementById("rcptFee").textContent = `₹${data.consultation_fee || selectedDoctor.consultation_fee} (PAID)`;
+      document.getElementById("rcptStatus").textContent = data.status || "CONFIRMED";
+      document.getElementById("receiptModal").classList.add("active");
+    }
+
+    function closeReceiptModal() {
+      document.getElementById("receiptModal").classList.remove("active");
+    }
+
+    // Load Patient Appointments
+    async function loadMyAppointments() {
+      if (!currentUser) return;
+      try {
+        const res = await fetch(`/api/appointments/patient?user_id=${currentUser.id}`);
+        const appts = await res.json();
+        document.getElementById("myApptCount").textContent = appts.length;
+        const tbody = document.getElementById("myAppointmentsTableBody");
+        tbody.innerHTML = "";
+
+        if (appts.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:var(--text-muted); padding:24px;">No appointments found. Click "Book Appointment" to schedule one!</td></tr>`;
+          return;
+        }
+
+        appts.forEach(a => {
+          const statusClass = a.status === "Confirmed" ? "status-confirmed" : a.status === "Cancelled" ? "status-cancelled" : "status-completed";
+          const tr = document.createElement("tr");
+          tr.className = "appt-row";
+          tr.innerHTML = `
+            <td><strong>#${a.id}</strong></td>
+            <td>
+              <div style="font-weight:600;">${a.doctor_name}</div>
+              <div style="font-size:0.75rem; color:var(--text-muted);">${a.department} (${a.specialization})</div>
+            </td>
+            <td>
+              <div>${a.appointment_date}</div>
+              <div style="color:var(--text-muted); font-size:0.75rem;">${a.appointment_time}</div>
+            </td>
+            <td><strong style="color:#34d399;">₹${a.consultation_fee}</strong></td>
+            <td><span class="status-pill ${statusClass}">${a.status}</span></td>
+            <td style="color:var(--text-muted); font-size:0.8rem;">${a.notes || "None"}</td>
+            <td>
+              <div style="display:flex; gap:6px;">
+                <button class="btn btn-secondary" style="padding:6px 10px; font-size:0.75rem;" onclick='openReceiptModal(${JSON.stringify(a)})'>Slip</button>
+                ${a.status === "Confirmed" ? `<button class="btn btn-danger" style="padding:6px 10px; font-size:0.75rem;" onclick="cancelAppt(${a.id})">Cancel</button>` : ""}
+              </div>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } catch (e) {
+        console.error("Failed to load appointments:", e);
+      }
+    }
+
+    async function cancelAppt(id) {
+      if (!confirm("Are you sure you want to cancel this appointment? The slot will be atomically released for reuse.")) return;
+      try {
+        const res = await fetch("/api/appointments/cancel", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ appointment_id: id })
+        });
+        if (res.ok) {
+          await loadMyAppointments();
+          await loadAdminStats();
+          alert("Appointment cancelled. Slot successfully freed.");
+        } else {
+          alert("Failed to cancel.");
+        }
+      } catch (e) {
+        alert("Error: " + e.message);
+      }
+    }
+
+    // Doctor Queue
+    async function loadDoctorQueue() {
+      const doc = doctorsList.find(d => d.user_id === currentUser.id) || doctorsList[0];
+      if (!doc) return;
+      try {
+        const res = await fetch(`/api/appointments/doctor?doctor_id=${doc.id}`);
+        const appts = await res.json();
+        const tbody = document.getElementById("doctorQueueTableBody");
+        tbody.innerHTML = "";
+        if (appts.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-muted); padding:20px;">No patient consultations scheduled currently.</td></tr>`;
+          return;
+        }
+        appts.forEach(a => {
+          const tr = document.createElement("tr");
+          tr.className = "appt-row";
+          tr.innerHTML = `
+            <td>#${a.id}</td>
+            <td><strong>${a.patient_name}</strong><br><span style="font-size:0.75rem; color:var(--text-muted);">${a.patient_email}</span></td>
+            <td>${a.appointment_date} @ ${a.appointment_time}</td>
+            <td><span class="status-pill ${a.status === 'Confirmed' ? 'status-confirmed' : 'status-completed'}">${a.status}</span></td>
+            <td>
+              ${a.status === 'Confirmed' ? `<button class="btn btn-success" style="padding:5px 10px; font-size:0.75rem;" onclick="markCompleted(${a.id})">Complete</button>` : '—'}
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } catch (e) {
+        console.error("Failed to load queue:", e);
+      }
+    }
+
+    async function markCompleted(id) {
+      try {
+        const res = await fetch("/api/doctor/complete", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ appointment_id: id })
+        });
+        if (res.ok) {
+          loadDoctorQueue();
+          loadAdminStats();
+        }
+      } catch (e) {
+        alert("Error completing appointment.");
+      }
+    }
+
+    async function handleAddSlot(e) {
+      e.preventDefault();
+      const doc = doctorsList.find(d => d.user_id === currentUser.id) || doctorsList[0];
+      const date = document.getElementById("newSlotDate").value;
+      const start = document.getElementById("newSlotStartTime").value;
+      const end = document.getElementById("newSlotEndTime").value;
+
+      try {
+        const res = await fetch("/api/doctor/add_slot", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            professional_id: doc.id,
+            date: date,
+            start_time: start,
+            end_time: end
+          })
+        });
+        if (res.ok) {
+          alert("New consultation slot added successfully!");
+          document.getElementById("addSlotForm").reset();
+        } else {
+          alert("Failed to add slot.");
+        }
+      } catch (err) {
+        alert("Error: " + err.message);
+      }
+    }
+
+    // Admin & Audit
+    async function loadAdminStats() {
+      try {
+        const res = await fetch("/api/admin/stats");
+        const stats = await res.json();
+        document.getElementById("kpiPatients").textContent = stats.patients_count;
+        document.getElementById("kpiDoctors").textContent = stats.doctors_count;
+        document.getElementById("kpiConfirmedAppts").textContent = stats.confirmed_appointments;
+        document.getElementById("kpiRevenue").textContent = `₹${stats.total_revenue.toLocaleString()}`;
+
+        // Audit Logs
+        const logsRes = await fetch("/api/admin/audit_logs");
+        const logs = await logsRes.json();
+        const tbody = document.getElementById("auditLogTableBody");
+        tbody.innerHTML = "";
+        logs.slice(0, 10).forEach(l => {
+          const tr = document.createElement("tr");
+          tr.className = "appt-row";
+          tr.innerHTML = `
+            <td style="color:var(--text-muted); font-size:0.8rem;">${l.created_at}</td>
+            <td><strong style="color:#38bdf8;">${l.action_type}</strong></td>
+            <td>${l.user_name || "System / Patient"}</td>
+            <td style="font-size:0.85rem;">${l.details}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } catch (e) {
+        console.error("Admin stats failed:", e);
+      }
+    }
+
+    // Kanban Board
+    async function loadKanbanBoard() {
+      try {
+        const res = await fetch("/api/scrum/kanban");
+        const data = await res.json();
+        const container = document.getElementById("kanbanBoardContainer");
+        container.innerHTML = "";
+
+        const columns = [
+          { key: "Backlog", title: "📋 Backlog" },
+          { key: "To Do", title: "📝 To Do" },
+          { key: "In Progress", title: "⚙️ In Progress" },
+          { key: "Review/Testing", title: "🔍 Review / Testing" },
+          { key: "Done", title: "✅ Done" }
+        ];
+
+        let totalStories = 0;
+        columns.forEach((col, colIdx) => {
+          const stories = data[col.key] || [];
+          totalStories += stories.length;
+          const colEl = document.createElement("div");
+          colEl.className = "kanban-col";
+          colEl.innerHTML = `
+            <div class="kanban-col-header">
+              <span>${col.title}</span>
+              <span class="col-count">${stories.length}</span>
+            </div>
+            <div class="stories-list" style="display:flex; flex-direction:column; gap:10px;">
+              ${stories.map(s => {
+                const priorityClass = s.priority.includes("Must") ? "priority-high" : s.priority.includes("Should") ? "priority-medium" : "priority-low";
+                return `
+                  <div class="story-card">
+                    <div class="story-top">
+                      <span class="story-code">${s.story_code}</span>
+                      <span class="priority-badge ${priorityClass}">${s.priority}</span>
+                    </div>
+                    <div class="story-title">${s.title}</div>
+                    <div class="story-bottom">
+                      <span>⚡ ${s.story_points} pts</span>
+                      <div class="story-controls">
+                        ${colIdx > 0 ? `<button class="btn-step" onclick="moveStory('${s.story_code}', '${columns[colIdx-1].key}')" title="Move Left">◀</button>` : ""}
+                        ${colIdx < columns.length - 1 ? `<button class="btn-step" onclick="moveStory('${s.story_code}', '${columns[colIdx+1].key}')" title="Move Right">▶</button>` : ""}
+                      </div>
+                    </div>
+                  </div>
+                `;
+              }).join("")}
+            </div>
+          `;
+          container.appendChild(colEl);
+        });
+
+        document.getElementById("kanbanTotalBadge").textContent = `${totalStories} Stories`;
+      } catch (e) {
+        console.error("Failed to load Kanban board:", e);
+      }
+    }
+
+    async function moveStory(code, newStatus) {
+      try {
+        const res = await fetch("/api/scrum/move_story", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ story_code: code, status: newStatus })
+        });
+        if (res.ok) {
+          loadKanbanBoard();
+        }
+      } catch (e) {
+        alert("Error moving story: " + e.message);
+      }
+    }
+  </script>
+</body>
+</html>

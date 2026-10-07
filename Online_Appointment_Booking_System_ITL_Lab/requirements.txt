@@ -1,0 +1,8 @@
+# MediFlow - Online Appointment Booking System
+# Python 3.10+ Standard Library requirements
+# (The system runs 100% on Python standard library: http.server, sqlite3, json, hashlib)
+
+# Optional dependencies for enhanced development or API benchmarking:
+requests>=2.31.0
+fastapi>=0.110.0
+uvicorn>=0.28.0
