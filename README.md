@@ -194,6 +194,8 @@ Online-Appointment-Booking-System-using-Scrum-Agile-Methodology/
 │   ├── SPRINT_REVIEW.md              # Sprint review reports & stakeholder feedback
 │   └── SPRINT_RETROSPECTIVE.md       # Retrospective logs & continuous improvements (Kaizen)
 │
+├── kanban_board.html                 # Interactive Visual Web Kanban Board (HTML5, Drag-and-Drop, Color Coding)
+│
 ├── tests/                            # Automated test suite
 │   ├── __init__.py                   # Test package marker
 │   └── test_appointment.py          # 15 automated unit & integration test cases
@@ -244,11 +246,18 @@ Walk through all Agile user stories and booking operations automatically in unde
 python src/main.py --demo
 ```
 
-### Option C: Direct Kanban Board Display
-Display the live SQLite-driven ASCII Kanban board directly:
+### Option C: Direct Terminal Kanban Board Display
+Display the live SQLite-driven ASCII Kanban board directly with ANSI priority color coding:
 ```bash
 python src/main.py --kanban
 ```
+
+### Option D: Interactive Visual Web Kanban Board (Browser)
+Open the modern, dark-themed interactive Kanban board in your web browser with HTML5 drag-and-drop, real-time filters, search, and vibrant priority color badges (🔴 High, 🟠 Medium, 🟢 Low):
+```bash
+python src/main.py --web
+```
+*(Or double-click `kanban_board.html` in your file explorer to open it in any browser!)*
 
 ---
 
