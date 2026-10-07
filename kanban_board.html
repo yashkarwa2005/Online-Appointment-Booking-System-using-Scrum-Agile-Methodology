@@ -638,12 +638,8 @@
       </div>
       <form onsubmit="handleCreateCard(event)">
         <div class="form-group">
-          <label>Story Code</label>
-          <input type="text" id="mCode" class="form-control" placeholder="e.g. US-13" required>
-        </div>
-        <div class="form-group">
           <label>Story Title</label>
-          <input type="text" id="mTitle" class="form-control" placeholder="e.g. Telemedicine Consultation" required>
+          <input type="text" id="mTitle" class="form-control" placeholder="e.g. Telemedicine Video Consultations" required>
         </div>
         <div class="form-group">
           <label>Description / Persona</label>
@@ -688,20 +684,27 @@
   </div>
 
   <script>
-    // Initial Seed Data matching the Scrum project exactly
+    // Clean, realistic Agile Sprint distribution with color-coded priorities
     const DEFAULT_CARDS = [
-      { id: "US-01", title: "User Registration & Salted Hashing", desc: "Enforce secure SHA-256 salted password hashing and unique username validation.", priority: "High", points: 3, column: "Done", assignee: "Yash Karwa" },
-      { id: "US-02", title: "Authentication & Role Sessions", desc: "Session authentication enforcing patient, doctor, and admin privileges.", priority: "High", points: 3, column: "Done", assignee: "Dev Team" },
-      { id: "US-03", title: "Search Doctors & Departments", desc: "Case-insensitive query across Cardiology, Neurology, Dermatology and fees.", priority: "High", points: 5, column: "Done", assignee: "Dev Team" },
-      { id: "US-04", title: "Doctor Schedule & Open Slots", desc: "Real-time query filtering unbooked slots (is_booked = 0).", priority: "High", points: 3, column: "Done", assignee: "Dev Team" },
-      { id: "US-05", title: "Atomic Appointment Booking Engine", desc: "Atomic SQLite transaction locking slot with double-booking defense.", priority: "High", points: 8, column: "Done", assignee: "Yash Karwa" },
-      { id: "US-06", title: "Patient Booking History View", desc: "Tabular display of active, past, and cancelled patient consultations.", priority: "Medium", points: 3, column: "Done", assignee: "Dev Team" },
-      { id: "US-07", title: "Cancel Appointment & Slot Recovery", desc: "Sets status to Cancelled and atomically releases availability slot.", priority: "High", points: 5, column: "Done", assignee: "Dev Team" },
-      { id: "US-08", title: "Reschedule to Alternative Slot", desc: "Single-step atomic slot swap: releases old slot and locks new slot.", priority: "Medium", points: 5, column: "Done", assignee: "Yash Karwa" },
-      { id: "US-09", title: "Confirmation Receipts & Feedback", desc: "Displays instant formatted booking confirmation receipt.", priority: "Medium", points: 3, column: "Done", assignee: "Dev Team" },
-      { id: "US-10", title: "Doctor Schedule Manager", desc: "Enables physicians to add and manage consultation time windows.", priority: "High", points: 5, column: "Done", assignee: "Dev Team" },
-      { id: "US-11", title: "Hospital Audit Oversight Log", desc: "Centralized hospital oversight across patients, doctors, and clinics.", priority: "Low", points: 3, column: "Done", assignee: "Dev Team" },
-      { id: "US-12", title: "In-App Scrum & Terminal Kanban", desc: "Full Scrum lifecycle tables and dynamic ASCII Kanban engine.", priority: "High", points: 8, column: "Done", assignee: "Yash Karwa" }
+      // 1. To Do Column
+      { id: "c10", title: "Doctor Consultation Schedule Management", desc: "Enables physicians to add, manage, and configure consultation time windows.", priority: "High", points: 5, column: "To Do", assignee: "Dev Team" },
+      { id: "c11", title: "Hospital Audit Oversight Log", desc: "Centralized hospital oversight across patients, doctors, and clinics.", priority: "Low", points: 3, column: "To Do", assignee: "Dev Team" },
+      { id: "c12", title: "In-App Scrum Backlog & Kanban Engine", desc: "Full Scrum lifecycle tables and dynamic ASCII Kanban engine for project tracking.", priority: "High", points: 8, column: "To Do", assignee: "Yash Karwa" },
+
+      // 2. In Progress Column
+      { id: "c6", title: "Patient Appointment History & Status", desc: "Tabular display of active, past, and cancelled patient consultations.", priority: "Medium", points: 3, column: "In Progress", assignee: "Dev Team" },
+      { id: "c7", title: "Cancel Appointment & Slot Recovery", desc: "Sets status to Cancelled and atomically releases availability slot for reuse.", priority: "High", points: 5, column: "In Progress", assignee: "Dev Team" },
+
+      // 3. Review / Testing Column
+      { id: "c8", title: "Reschedule to Alternative Slot", desc: "Single-step atomic slot swap: releases old slot and locks new slot cleanly.", priority: "Medium", points: 5, column: "Review/Testing", assignee: "Yash Karwa" },
+      { id: "c9", title: "Real-time Booking Confirmation Receipts", desc: "Displays instant formatted booking confirmation receipt with appointment reference.", priority: "Medium", points: 3, column: "Review/Testing", assignee: "Dev Team" },
+
+      // 4. Done Column
+      { id: "c1", title: "User Registration & Salted Hashing", desc: "Enforce secure SHA-256 salted password hashing and unique username validation.", priority: "High", points: 3, column: "Done", assignee: "Yash Karwa" },
+      { id: "c2", title: "Authentication & Role Sessions", desc: "Session authentication enforcing patient, doctor, and admin privileges.", priority: "High", points: 3, column: "Done", assignee: "Dev Team" },
+      { id: "c3", title: "Search Doctors & Departments", desc: "Case-insensitive query across Cardiology, Neurology, Dermatology and fees.", priority: "High", points: 5, column: "Done", assignee: "Dev Team" },
+      { id: "c4", title: "Doctor Schedule & Open Slot Query", desc: "Real-time query filtering unbooked slots (is_booked = 0).", priority: "High", points: 3, column: "Done", assignee: "Dev Team" },
+      { id: "c5", title: "Atomic Appointment Booking Engine", desc: "Atomic SQLite transaction locking slot with double-booking concurrency defense.", priority: "High", points: 8, column: "Done", assignee: "Yash Karwa" }
     ];
 
     let cards = [];
@@ -709,22 +712,23 @@
     let draggedCardId = null;
 
     function init() {
-      const saved = localStorage.getItem("scrum_kanban_cards");
+      // Use versioned storage to force updated distributed layout
+      const saved = localStorage.getItem("scrum_kanban_cards_clean_v2");
       if (saved) {
-        try { cards = JSON.parse(saved); } catch (e) { cards = [...DEFAULT_CARDS]; }
+        try { cards = JSON.parse(saved); } catch (e) { cards = JSON.parse(JSON.stringify(DEFAULT_CARDS)); }
       } else {
-        cards = [...DEFAULT_CARDS];
+        cards = JSON.parse(JSON.stringify(DEFAULT_CARDS));
       }
       renderBoard();
     }
 
     function saveState() {
-      localStorage.setItem("scrum_kanban_cards", JSON.stringify(cards));
+      localStorage.setItem("scrum_kanban_cards_clean_v2", JSON.stringify(cards));
       updateMetrics();
     }
 
     function resetDefaultBoard() {
-      if (confirm("Reset Kanban board to default sprint state?")) {
+      if (confirm("Reset Kanban board to default sprint distribution?")) {
         cards = JSON.parse(JSON.stringify(DEFAULT_CARDS));
         saveState();
         renderBoard();
@@ -746,7 +750,6 @@
         // Filter logic
         const matchesPrio = currentFilter === "ALL" || card.priority.toLowerCase() === currentFilter.toLowerCase();
         const matchesSearch = !searchVal || 
-          card.id.toLowerCase().includes(searchVal) || 
           card.title.toLowerCase().includes(searchVal) || 
           card.desc.toLowerCase().includes(searchVal) ||
           card.assignee.toLowerCase().includes(searchVal);
@@ -789,10 +792,11 @@
 
       const initial = card.assignee ? card.assignee.charAt(0).toUpperCase() : "U";
 
+      // Clean card without ugly [US-01] code prefixes
       el.innerHTML = `
         <div class="card-stripe ${stripeClass}"></div>
         <div class="card-meta-top">
-          <span class="card-code">${card.id}</span>
+          <span style="font-size:0.75rem; color:var(--text-muted); font-weight:600;">Story</span>
           <span class="prio-indicator ${prioClass}">${prioLabel}</span>
         </div>
         <div class="card-title">${card.title}</div>
@@ -876,7 +880,6 @@
 
     function handleCreateCard(e) {
       e.preventDefault();
-      const code = document.getElementById("mCode").value.trim().toUpperCase();
       const title = document.getElementById("mTitle").value.trim();
       const desc = document.getElementById("mDesc").value.trim();
       const prio = document.getElementById("mPrio").value;
@@ -885,7 +888,7 @@
       const assignee = document.getElementById("mAssignee").value.trim() || "Unassigned";
 
       cards.push({
-        id: code,
+        id: "c_" + Date.now(),
         title: title,
         desc: desc,
         priority: prio,

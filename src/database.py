@@ -220,20 +220,20 @@ def seed_initial_data(db_path: Optional[str] = None) -> None:
         VALUES (?, ?, ?, ?, ?, ?, ?);
     """, sprints)
 
-    # Seed User Stories (Matching USER_STORY.md)
+    # Seed User Stories (Matching USER_STORY.md with realistic active Agile distribution)
     user_stories = [
-        ("US-01", "User Registration", "Patient", "register an account", "access booking platform securely", "Must Have", 3, 1, "Done", "Yash Karwa", "Enforce secure SHA-256 salted password hashing."),
-        ("US-02", "User Authentication & Login", "User", "log in with credentials", "access role-based dashboard", "Must Have", 3, 1, "Done", "Dev Team", "Provide session authentication with validation."),
+        ("US-01", "User Registration & Salted Hashing", "Patient", "register an account", "access booking platform securely", "Must Have", 3, 1, "Done", "Yash Karwa", "Enforce secure SHA-256 salted password hashing."),
+        ("US-02", "User Authentication & Role Sessions", "User", "log in with credentials", "access role-based dashboard", "Must Have", 3, 1, "Done", "Dev Team", "Provide session authentication with validation."),
         ("US-03", "Search Doctors by Specialization", "Patient", "search doctors by specialty", "find appropriate healthcare specialist", "Must Have", 5, 2, "Done", "Dev Team", "Filter by department, fee, and name."),
         ("US-04", "View Doctor Available Slots", "Patient", "view open consultation slots", "pick suitable consultation time", "Must Have", 3, 2, "Done", "Dev Team", "Query unbooked slots in real-time."),
         ("US-05", "Book Appointment & Slot Lock", "Patient", "book an open slot", "reserve consultation without double-booking", "Must Have", 8, 3, "Done", "Yash Karwa", "Execute atomic transaction locking slot."),
-        ("US-06", "View Appointment History", "Patient", "view my active and past bookings", "track scheduled consultations", "Should Have", 3, 3, "Done", "Dev Team", "Tabular display of booking records."),
-        ("US-07", "Cancel Appointment & Release Slot", "Patient", "cancel a scheduled appointment", "free slot for other patients", "Must Have", 5, 4, "Done", "Dev Team", "Atomically flip is_booked back to 0."),
-        ("US-08", "Reschedule Appointment", "Patient", "reschedule to alternative slot", "adjust consultation date cleanly", "Should Have", 5, 4, "Done", "Yash Karwa", "Release old slot and lock new slot atomically."),
-        ("US-09", "Instant Confirmation Receipts", "Patient", "view booking receipt summary", "confirm consultation details", "Should Have", 3, 5, "Done", "Dev Team", "Formatted appointment receipt."),
-        ("US-10", "Doctor Availability Management", "Doctor", "publish consultation schedule", "enable patients to book slots", "Must Have", 5, 2, "Done", "Dev Team", "Add new date/time availability windows."),
-        ("US-11", "Admin Appointment Oversight", "Admin", "view all clinic appointments", "monitor clinic operations and audit", "Could Have", 3, 5, "Done", "Dev Team", "Global appointment oversight screen."),
-        ("US-12", "In-App Scrum & Kanban Engine", "Scrum Team", "track stories and Kanban board", "practice transparent Agile development", "Must Have", 8, 5, "Done", "Yash Karwa", "ASCII Kanban board and sprint metrics."),
+        ("US-06", "Patient Appointment History & Status", "Patient", "view my active and past bookings", "track scheduled consultations", "Should Have", 3, 3, "In Progress", "Dev Team", "Tabular display of booking records."),
+        ("US-07", "Cancel Appointment & Slot Recovery", "Patient", "cancel a scheduled appointment", "free slot for other patients", "Must Have", 5, 4, "In Progress", "Dev Team", "Atomically flip is_booked back to 0."),
+        ("US-08", "Reschedule Appointment to New Slot", "Patient", "reschedule to alternative slot", "adjust consultation date cleanly", "Should Have", 5, 4, "Review/Testing", "Yash Karwa", "Release old slot and lock new slot atomically."),
+        ("US-09", "Real-time Booking Confirmation Receipts", "Patient", "view booking receipt summary", "confirm consultation details", "Should Have", 3, 5, "Review/Testing", "Dev Team", "Formatted appointment receipt."),
+        ("US-10", "Doctor Consultation Schedule Management", "Doctor", "publish consultation schedule", "enable patients to book slots", "Must Have", 5, 2, "To Do", "Dev Team", "Add new date/time availability windows."),
+        ("US-11", "Hospital Administrative Audit Log", "Admin", "view all clinic appointments", "monitor clinic operations and audit", "Could Have", 3, 5, "To Do", "Dev Team", "Global appointment oversight screen."),
+        ("US-12", "In-App Scrum Backlog & Kanban Engine", "Scrum Team", "track stories and Kanban board", "practice transparent Agile development", "Must Have", 8, 5, "To Do", "Yash Karwa", "ASCII Kanban board and sprint metrics."),
     ]
     cursor.executemany("""
         INSERT INTO user_stories (story_code, title, role, want, benefit, priority, story_points, sprint_id, status, assignee, description)
