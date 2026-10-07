@@ -499,9 +499,10 @@ class AppRunner:
             print(f"2. [SCRUM] {Color.BOLD}Scrum Project Management Subsystem{Color.RESET} (User Stories, Sprints, Kanban Board)")
             print(f"3. [DEMO]  {Color.BOLD}Run Automated Viva Demonstration{Color.RESET} (30s End-to-End Walkthrough)")
             print(f"4. [TEST]  {Color.BOLD}Run Automated Unit Tests{Color.RESET} (15 Test Cases, 100% Pass Rate)")
+            print(f"5. [WEB]   {Color.BOLD}Open Interactive Web Kanban Board{Color.RESET} (Color Coded HTML in Browser)")
             print(f"0. [EXIT]  {Color.BOLD}Exit Application{Color.RESET}")
 
-            choice = input(f"\n{Color.BOLD}Enter your choice (0-4): {Color.RESET}").strip()
+            choice = input(f"\n{Color.BOLD}Enter your choice (0-5): {Color.RESET}").strip()
 
             if choice == "1":
                 self.menu_appointment_system()
@@ -514,11 +515,16 @@ class AppRunner:
                 suite = unittest.defaultTestLoader.discover("tests")
                 runner = unittest.TextTestRunner(verbosity=2)
                 runner.run(suite)
+            elif choice == "5":
+                import webbrowser
+                web_path = os.path.join(PROJECT_ROOT, "kanban_board.html")
+                print(f"{Color.GREEN}[*] Opening Visual Web Kanban Board in your browser: {web_path}{Color.RESET}")
+                webbrowser.open(f"file:///{web_path.replace(os.sep, '/')}")
             elif choice == "0":
                 print(f"\n{Color.CYAN}Thank you for reviewing the Online Appointment Booking Scrum Project! Goodbye.{Color.RESET}")
                 break
             else:
-                print(f"{Color.RED}Invalid selection. Please choose an option between 0 and 4.{Color.RESET}")
+                print(f"{Color.RED}Invalid selection. Please choose an option between 0 and 5.{Color.RESET}")
 
 
 def main():
@@ -526,6 +532,7 @@ def main():
     parser.add_argument("--demo", action="store_true", help="Run automated viva demonstration and exit")
     parser.add_argument("--kanban", action="store_true", help="Render ASCII Kanban board and exit")
     parser.add_argument("--test", action="store_true", help="Run automated unit test suite and exit")
+    parser.add_argument("--web", action="store_true", help="Open visual interactive Kanban board in default web browser")
     parser.add_argument("--db", type=str, default=DEFAULT_DB_PATH, help="Path to SQLite database file")
 
     args = parser.parse_args()
@@ -540,6 +547,11 @@ def main():
         suite = unittest.defaultTestLoader.discover("tests")
         runner = unittest.TextTestRunner(verbosity=2)
         runner.run(suite)
+    elif args.web:
+        import webbrowser
+        web_path = os.path.join(PROJECT_ROOT, "kanban_board.html")
+        print(f"[*] Opening Visual Web Kanban Board: {web_path}")
+        webbrowser.open(f"file:///{web_path.replace(os.sep, '/')}")
     else:
         app.run()
 

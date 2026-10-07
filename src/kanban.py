@@ -67,15 +67,33 @@ class KanbanService:
         else:
             return "[*] Low"
 
+    def format_card_header(self, code: str, priority: str, width: int) -> str:
+        """Formats card header with ANSI color coding while preserving column alignment."""
+        p = priority.lower()
+        if "must" in p or "high" in p:
+            p_text = "[!] High"
+            c_start = "\033[91m"  # Red
+        elif "should" in p or "medium" in p:
+            p_text = "[-] Med"
+            c_start = "\033[93m"  # Yellow/Amber
+        else:
+            p_text = "[*] Low"
+            c_start = "\033[92m"  # Green
+        c_end = "\033[0m"
+
+        plain_text = f"{code} {p_text}"
+        padding = " " * max(0, width - len(plain_text))
+        return f"{code} {c_start}{p_text}{c_end}{padding}"
+
     def render_board(self, show_all: bool = True) -> str:
-        """Renders an ASCII Kanban board suitable for terminal display."""
+        """Renders an ASCII Kanban board suitable for terminal display with color-coded priorities."""
         board = self.get_board_data()
         col_width = 24
         header_sep = "+" + ("-" * (col_width + 2) + "+") * len(self.COLUMNS)
 
         lines = []
         lines.append("\n" + "=" * 130)
-        lines.append("                        AGILE SCRUM KANBAN BOARD (Sprint & Backlog Progression)")
+        lines.append("                  AGILE SCRUM KANBAN BOARD (Color Coding: High = Red, Med = Yellow, Low = Green)")
         lines.append("=" * 130)
 
         # Print Column Headers
@@ -99,7 +117,7 @@ class KanbanService:
         display_limit = max_rows if show_all else min(max_rows, 10)
 
         for r in range(display_limit):
-            # Line 1: Code + Priority
+            # Line 1: Code + Priority with color
             row_l1 = []
             row_l2 = []
             row_l3 = []
@@ -109,18 +127,17 @@ class KanbanService:
                 items = board[col]
                 if r < len(items):
                     item = items[r]
-                    p_badge = self.get_priority_symbol(item["priority"])
-                    txt1 = f"{item['code']} {p_badge}"
+                    txt1_colored = self.format_card_header(item["code"], item["priority"], col_width)
                     # Truncate title
                     t = item["title"]
                     txt2 = (t[:col_width - 3] + "..") if len(t) > col_width else t
                     txt3 = f"{item['points']}pts | {item['assignee'][:10]}"
                 else:
-                    txt1 = ""
+                    txt1_colored = " " * col_width
                     txt2 = ""
                     txt3 = ""
 
-                row_l1.append(f"| {txt1.ljust(col_width)} ")
+                row_l1.append(f"| {txt1_colored} ")
                 row_l2.append(f"| {txt2.ljust(col_width)} ")
                 row_l3.append(f"| {txt3.ljust(col_width)} ")
                 row_blank.append(f"| {' ' * col_width} ")
@@ -138,6 +155,7 @@ class KanbanService:
 
         lines.append(f" Total Work Items: {total_items} | Completed: {done_items} | Flow Progress: {progress}%")
         lines.append(" Workflow: BACKLOG -> TO DO -> IN PROGRESS -> REVIEW/TESTING -> DONE")
+        lines.append(" Priority Color Coding: \033[91m[!] High (Must Have)\033[0m | \033[93m[-] Med (Should Have)\033[0m | \033[92m[*] Low (Could Have)\033[0m")
         lines.append("=" * 130 + "\n")
 
         return "\n".join(lines)
